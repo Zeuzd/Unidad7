@@ -3,21 +3,21 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-const PORT = process.env.PORT || 3000;
+app.use(express.static('public'));
 
-// Servir archivos estáticos
-app.use(express.static('../cliente'));
-
-// Conexión de sockets
 io.on('connection', (socket) => {
-  console.log('Nuevo cliente conectado:', socket.id);
+  console.log('🟢 Cliente conectado');
+
+  socket.on('datos-ruido', (data) => {
+    console.log(`🔊 Hinchada A: ${data.hinchadaA.toFixed(1)} | Hinchada B: ${data.hinchadaB.toFixed(1)} | Δ: ${data.diferencia.toFixed(1)} | A%: ${data.porcentaje.toFixed(1)}%`);
+  });
 
   socket.on('disconnect', () => {
-    console.log('Cliente desconectado:', socket.id);
+    console.log('🔴 Cliente desconectado');
   });
 });
 
-// Iniciar el servidor
+const PORT = 3000;
 http.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
